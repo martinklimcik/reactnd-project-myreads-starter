@@ -1,38 +1,48 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import BookShelf from "./BookShelf";
 
+const MyReadsHeader = () => {
+  return (
+    <div className="list-books-title">
+      <h1>MyReads</h1>
+    </div>
+  );
+};
+
+const SearchPageButton = () => {
+  return (
+    <Link to="/search">
+      <div className="open-search">
+        <button>Add a book</button>
+      </div>
+    </Link>
+  );
+};
+
 class MainPage extends React.Component {
+  filterBooks = (shelf) => {
+    return this.props.bookList.filter((book) => book.shelf === shelf);
+  };
+
   render() {
     return (
       <div className="list-books">
-        <div className="list-books-title">
-          <h1>MyReads</h1>
-        </div>
+        <MyReadsHeader />
         <div className="list-books-content">
           <div>
             <BookShelf
               name="Currently Reading"
-              books={this.props.bookList.filter(
-                (book) => book.shelf === "currentlyReading"
-              )}
+              books={this.filterBooks("currentlyReading")}
             />
             <BookShelf
               name="Want to Read"
-              books={this.props.bookList.filter(
-                (book) => book.shelf === "wantToRead"
-              )}
+              books={this.filterBooks("wantToRead")}
             />
-            <BookShelf
-              name="Read"
-              books={this.props.bookList.filter(
-                (book) => book.shelf === "read"
-              )}
-            />
+            <BookShelf name="Read" books={this.filterBooks("read")} />
           </div>
         </div>
-        <div className="open-search">
-          <button onClick={this.props.switchView}>Add a book</button>
-        </div>
+        <SearchPageButton />
       </div>
     );
   }

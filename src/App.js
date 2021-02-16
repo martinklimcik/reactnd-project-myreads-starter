@@ -3,43 +3,37 @@ import * as BooksAPI from "./BooksAPI";
 import "./App.css";
 import SearchPage from "./components/SearchPage";
 import MainPage from "./components/MainPage";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 // TODO: PropTypes
-// TODO: URL navigation
 
 class BooksApp extends React.Component {
   state = {
     bookList: [],
-    showSearchPage: false,
   };
   componentDidMount() {
+    // Update book list
     BooksAPI.getAll().then((result) => {
-      console.log(result);
       this.setState({
         bookList: result,
       });
     });
   }
 
-  // TODO: Use Routes instead of this
-  switchView = () => {
-    this.setState((prevState) => {
-      return { showSearchPage: !prevState.showSearchPage };
-    });
-  };
-
   render() {
     return (
-      <div className="app">
-        {this.state.showSearchPage ? (
-          <SearchPage switchView={this.switchView} />
-        ) : (
-          <MainPage
-            bookList={this.state.bookList}
-            switchView={this.switchView}
-          />
-        )}
-      </div>
+      <Router>
+        <div className="app">
+          <Switch>
+            <Route exact path="/">
+              <MainPage bookList={this.state.bookList} />
+            </Route>
+            <Route path="/search">
+              <SearchPage />
+            </Route>
+          </Switch>
+        </div>
+      </Router>
     );
   }
 }
