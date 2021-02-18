@@ -2,15 +2,21 @@ import React from "react";
 
 // TODO: currently selected value
 class BookButton extends React.Component {
+  getShelf = (value) => {
+    return value === undefined ? "none" : value;
+  };
+
+  state = { selected: this.getShelf(this.props.selected) };
+
+  handleShelfChange = (event) => {
+    this.setState({ selected: this.getShelf(event.target.value) });
+    this.props.onChange(event);
+  };
+
   render() {
     return (
       <div className="book-shelf-changer">
-        <select
-          onChange={this.props.onChange}
-          value={
-            this.props.selected === undefined ? "none" : this.props.selected
-          }
-        >
+        <select onChange={this.handleShelfChange} value={this.state.selected}>
           <option value="move" disabled>
             Move to...
           </option>
@@ -42,6 +48,9 @@ class Book extends React.Component {
   };
 
   render() {
+    let img = this.props.book.imageLinks;
+    img =
+      img != null && img.thumbnail != null ? `url("${img.thumbnail}")` : "none";
     return (
       <li>
         <div className="book">
@@ -51,9 +60,7 @@ class Book extends React.Component {
               style={{
                 width: 128,
                 height: 193,
-                backgroundImage: `url("${
-                  this.props.book.imageLinks.thumbnail
-                }")`,
+                backgroundImage: img,
               }}
             />
             <BookButton

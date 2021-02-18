@@ -5,14 +5,14 @@ import SearchPage from "./components/SearchPage";
 import MainPage from "./components/MainPage";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
-// TODO: PropTypes
+// TODO: Search saved upon refresh - put query into url
 
 class BooksApp extends React.Component {
   state = {
     bookList: [],
   };
 
-  updateBooks = () => {
+  updateBookList = () => {
     BooksAPI.getAll().then((result) => {
       this.setState({
         bookList: result,
@@ -21,12 +21,13 @@ class BooksApp extends React.Component {
   };
 
   handleBookChange = (book, toShelf) => {
-    BooksAPI.update(book, toShelf);
-    this.updateBooks();
+    BooksAPI.update(book, toShelf).then(() => {
+      this.updateBookList();
+    });
   };
 
   componentDidMount() {
-    this.updateBooks();
+    this.updateBookList();
   }
 
   render() {

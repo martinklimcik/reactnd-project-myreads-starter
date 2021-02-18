@@ -31,7 +31,7 @@ const SearchResults = (props) => {
   return (
     <div className="search-books-results">
       {props.foundBooks === undefined || props.foundBooks.length === 0 ? (
-        "no Books match filter criteria"
+        <p className="no-results">No results found</p>
       ) : (
         <BookGrid books={props.foundBooks} onBookChange={props.onBookChange} />
       )}
@@ -40,16 +40,8 @@ const SearchResults = (props) => {
 };
 
 class SearchPage extends React.Component {
-  state = { searchQuery: "", foundBooks: [] };
-
+  state = { searchQuery: "", foundBooks: [], clear: false };
   updateResults = (newResults) => {
-    newResults = newResults.map((resultBook) => {
-      const containedBook = this.props.bookList.find(
-        (myBook) => myBook.id === resultBook.id
-      );
-      return containedBook === undefined ? resultBook : containedBook;
-    });
-
     this.setState({
       foundBooks: newResults,
     });
@@ -59,12 +51,17 @@ class SearchPage extends React.Component {
     // TODO: make sure deleting input deletes all found - query arrives later and overwrites setState after first if
     const query = event.target.value.trim();
     this.setState({
-      searchQuery: query,
+      searchQuery: event.target.value,
+      clear: query === "",
     });
+    // for searching purposes, white space at the beginning and end of input is ignored
     if (query === "") {
       this.updateResults([]);
     } else {
       BooksAPI.search(query).then((data) => {
+        if (this.state.clear) {
+          return;
+        }
         if (Array.isArray(data)) {
           this.updateResults(data);
         } else {
@@ -72,6 +69,15 @@ class SearchPage extends React.Component {
         }
       });
     }
+  };
+
+  compareWithBookShelves = (searchResults) => {
+    return searchResults.map((resultBook) => {
+      const containedBook = this.props.bookList.find(
+        (myBook) => myBook.id === resultBook.id
+      );
+      return containedBook === undefined ? resultBook : containedBook;
+    });
   };
 
   render() {
@@ -82,7 +88,7 @@ class SearchPage extends React.Component {
           handleInput={this.handleInput}
         />
         <SearchResults
-          foundBooks={this.state.foundBooks}
+          foundBooks={this.compareWithBookShelves(this.state.foundBooks)}
           onBookChange={this.props.onBookChange}
         />
       </div>
