@@ -34,12 +34,18 @@ class MainPage extends React.Component {
             <BookShelf
               name="Currently Reading"
               books={this.filterBooks("currentlyReading")}
+              onBookChange={this.props.onBookChange}
             />
             <BookShelf
               name="Want to Read"
               books={this.filterBooks("wantToRead")}
+              onBookChange={this.props.onBookChange}
             />
-            <BookShelf name="Read" books={this.filterBooks("read")} />
+            <BookShelf
+              name="Read"
+              books={this.filterBooks("read")}
+              onBookChange={this.props.onBookChange}
+            />
           </div>
         </div>
         <SearchPageButton />

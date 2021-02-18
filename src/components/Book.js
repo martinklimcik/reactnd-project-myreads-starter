@@ -5,7 +5,12 @@ class BookButton extends React.Component {
   render() {
     return (
       <div className="book-shelf-changer">
-        <select /*onChange={this.props.bookChanged}*/>
+        <select
+          onChange={this.props.onChange}
+          value={
+            this.props.selected === undefined ? "none" : this.props.selected
+          }
+        >
           <option value="move" disabled>
             Move to...
           </option>
@@ -19,9 +24,23 @@ class BookButton extends React.Component {
   }
 }
 
+const Authors = (props) => {
+  return (
+    <div className="book-authors">
+      {props.authors === undefined
+        ? "Unknown author"
+        : props.authors.map((author) => <div key={author}>{author}</div>)}
+    </div>
+  );
+};
+
 // TODO: show subtitle
 // TODO additional info on hover
 class Book extends React.Component {
+  handleShelfChange = (event) => {
+    this.props.onBookChange(this.props.book, event.target.value);
+  };
+
   render() {
     return (
       <li>
@@ -37,10 +56,13 @@ class Book extends React.Component {
                 }")`,
               }}
             />
-            <BookButton /*bookChanged={this.props.book.bookChanged}*/ />
+            <BookButton
+              onChange={this.handleShelfChange}
+              selected={this.props.book.shelf}
+            />
           </div>
           <div className="book-title">{this.props.book.title}</div>
-          <div className="book-authors">{this.props.book.authors}</div>
+          <Authors authors={this.props.book.authors} />
         </div>
       </li>
     );

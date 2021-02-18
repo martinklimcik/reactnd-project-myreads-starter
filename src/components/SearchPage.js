@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import * as BooksAPI from "../BooksAPI";
 import BookGrid from "./BookGrid";
+import PropTypes from "prop-types";
 
 const SearchInput = (props) => {
   return (
@@ -21,16 +22,38 @@ const SearchInput = (props) => {
   );
 };
 
+SearchInput.propTypes = {
+  searchQuery: PropTypes.string.isRequired,
+  handleInput: PropTypes.func.isRequired,
+};
+
 const SearchResults = (props) => {
   return (
     <div className="search-books-results">
-      <BookGrid books={props.books} />
+      {props.foundBooks === undefined || props.foundBooks.length === 0 ? (
+        "no Books match filter criteria"
+      ) : (
+        <BookGrid books={props.foundBooks} onBookChange={props.onBookChange} />
+      )}
     </div>
   );
 };
 
 class SearchPage extends React.Component {
   state = { searchQuery: "", foundBooks: [] };
+
+  updateResults = (newResults) => {
+    newResults = newResults.map((resultBook) => {
+      const containedBook = this.props.bookList.find(
+        (myBook) => myBook.id === resultBook.id
+      );
+      return containedBook === undefined ? resultBook : containedBook;
+    });
+
+    this.setState({
+      foundBooks: newResults,
+    });
+  };
 
   handleInput = (event) => {
     // TODO: make sure deleting input deletes all found - query arrives later and overwrites setState after first if
@@ -39,13 +62,13 @@ class SearchPage extends React.Component {
       searchQuery: query,
     });
     if (query === "") {
-      this.setState({ foundBooks: [] });
+      this.updateResults([]);
     } else {
       BooksAPI.search(query).then((data) => {
         if (Array.isArray(data)) {
-          this.setState({ foundBooks: data });
+          this.updateResults(data);
         } else {
-          this.setState({ foundBooks: [] });
+          this.updateResults([]);
         }
       });
     }
@@ -54,8 +77,14 @@ class SearchPage extends React.Component {
   render() {
     return (
       <div className="search-books">
-        <SearchInput searchQuery={this.state.searchQuery} />
-        <SearchResults books={this.state.foundBooks} />
+        <SearchInput
+          searchQuery={this.state.searchQuery}
+          handleInput={this.handleInput}
+        />
+        <SearchResults
+          foundBooks={this.state.foundBooks}
+          onBookChange={this.props.onBookChange}
+        />
       </div>
     );
   }
