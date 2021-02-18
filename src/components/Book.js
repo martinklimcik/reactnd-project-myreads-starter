@@ -1,6 +1,6 @@
 import React from "react";
+import PropTypes from "prop-types";
 
-// TODO: currently selected value
 class BookButton extends React.Component {
   getShelf = (value) => {
     return value === undefined ? "none" : value;
@@ -30,6 +30,11 @@ class BookButton extends React.Component {
   }
 }
 
+BookButton.propTypes = {
+  selected: PropTypes.string,
+  onChange: PropTypes.func.isRequired,
+};
+
 const Authors = (props) => {
   return (
     <div className="book-authors">
@@ -40,8 +45,10 @@ const Authors = (props) => {
   );
 };
 
-// TODO: show subtitle
-// TODO additional info on hover
+Authors.propTypes = {
+  authors: PropTypes.array,
+};
+
 class Book extends React.Component {
   handleShelfChange = (event) => {
     this.props.onBookChange(this.props.book, event.target.value);
@@ -75,5 +82,10 @@ class Book extends React.Component {
     );
   }
 }
+
+Book.propTypes = {
+  onBookChange: PropTypes.func.isRequired,
+  book: PropTypes.object.isRequired,
+};
 
 export default Book;

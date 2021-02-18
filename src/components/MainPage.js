@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import BookShelf from "./BookShelf";
+import PropTypes from "prop-types";
 
 const MyReadsHeader = () => {
   return (
@@ -54,4 +55,8 @@ class MainPage extends React.Component {
   }
 }
 
+MainPage.propTypes = {
+  bookList: PropTypes.array.isRequired,
+  onBookChange: PropTypes.func.isRequired,
+};
 export default MainPage;

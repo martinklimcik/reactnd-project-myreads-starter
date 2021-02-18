@@ -39,6 +39,11 @@ const SearchResults = (props) => {
   );
 };
 
+SearchResults.propTypes = {
+  foundBooks: PropTypes.array,
+  onBookChange: PropTypes.func.isRequired,
+};
+
 class SearchPage extends React.Component {
   state = { searchQuery: "", foundBooks: [], clear: false };
   updateResults = (newResults) => {
@@ -48,7 +53,6 @@ class SearchPage extends React.Component {
   };
 
   handleInput = (event) => {
-    // TODO: make sure deleting input deletes all found - query arrives later and overwrites setState after first if
     const query = event.target.value.trim();
     this.setState({
       searchQuery: event.target.value,
@@ -59,12 +63,15 @@ class SearchPage extends React.Component {
       this.updateResults([]);
     } else {
       BooksAPI.search(query).then((data) => {
+        // this ensures that upon deletion of query, the result isn't overwritten by previous query
         if (this.state.clear) {
           return;
         }
+        // successful search results in array of books
         if (Array.isArray(data)) {
           this.updateResults(data);
         } else {
+          // unsuccessful search resulted in object with error status
           this.updateResults([]);
         }
       });
@@ -72,6 +79,7 @@ class SearchPage extends React.Component {
   };
 
   compareWithBookShelves = (searchResults) => {
+    // find out which books returned by search are already on a bookshelves and update their info so that dropdown preselection matches
     return searchResults.map((resultBook) => {
       const containedBook = this.props.bookList.find(
         (myBook) => myBook.id === resultBook.id
@@ -95,5 +103,10 @@ class SearchPage extends React.Component {
     );
   }
 }
+
+SearchPage.propTypes = {
+  bookList: PropTypes.array.isRequired,
+  onBookChange: PropTypes.func.isRequired,
+};
 
 export default SearchPage;

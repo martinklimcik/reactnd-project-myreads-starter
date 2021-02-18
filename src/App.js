@@ -5,8 +5,6 @@ import SearchPage from "./components/SearchPage";
 import MainPage from "./components/MainPage";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
-// TODO: Search saved upon refresh - put query into url
-
 class BooksApp extends React.Component {
   state = {
     bookList: [],

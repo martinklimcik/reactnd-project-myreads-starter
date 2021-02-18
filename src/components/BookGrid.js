@@ -20,6 +20,7 @@ class BookGrid extends React.Component {
 
 BookGrid.propTypes = {
   onBookChange: PropTypes.func.isRequired,
+  books: PropTypes.array.isRequired,
 };
 
 export default BookGrid;
